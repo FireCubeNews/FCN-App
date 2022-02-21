@@ -1,0 +1,104 @@
+﻿<Page
+    x:Class="FCN.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FCN"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls" 
+    xmlns:classes="using:FCN.Classes" 
+    xmlns:helpers="using:FCN.Helpers" xmlns:usercontrols="using:FCN.UserControls" 
+    xmlns:icons="using:Fluent.Icons"
+    controls:BackdropMaterial.ApplyToRootOrPageBackground="True">
+    <Grid>
+        <CommandBar DefaultLabelPosition="Right" OverflowButtonVisibility="Collapsed" VerticalAlignment="Top" Margin="50" HorizontalAlignment="Left" Visibility="{x:Bind Reader.Visibility, Mode=OneWay}" Canvas.ZIndex="20">
+            <AppBarButton Click="BackButton_Click" Label="Back">
+                <AppBarButton.Icon>
+                    <icons:FluentIconElement Symbol="ArrowLeft20"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
+        <usercontrols:ReaderControl x:Name="Reader" Visibility="Collapsed" Canvas.ZIndex="10" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <GridView x:Name="ArticlesListView" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Top" ItemClick="ArticlesListView_ItemClick" IsItemClickEnabled="True">
+        <GridView.Header>
+            <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="24" HorizontalAlignment="Left">
+                        <Viewbox Height="40" Stretch="Uniform" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                            <Canvas Height="222" Width="175">
+                                <Rectangle Canvas.Left="10" Canvas.Top="66" Width="155" Height="155" Stroke="#D2CFDF" StrokeThickness="20" Fill="#00000000" />
+                                <Path Data="M175 0C119.169 94.8634 74.1409 154.52 91.9474 222H175C175 126.648 175.001 112.467 175 0Z" Fill="white" />
+                            </Canvas>
+                        </Viewbox>
+                        <TextBlock FontSize="28" Margin="12, 4, 0, 0" FontWeight="SemiBold" Text="FCN Alpha preview"/>
+                        <HyperlinkButton Margin="8, 10, 4, 0" NavigateUri="https://twitter.com/FireCubeNews">Twitter</HyperlinkButton>
+                        <HyperlinkButton Margin="4, 10, 4, 0" NavigateUri="https://discord.gg/cj4gM8VdeF">Discord</HyperlinkButton>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center" CornerRadius="8">
+                <Grid VerticalAlignment="Center" CornerRadius="8" Height="280" Width="480">
+                    <Image Height="300" Width="500" Source="{x:Bind helpers:ArticlesHelper.GetArticleThumbnail(FirstArticle.metadata.thumbnail), Mode=OneWay}" />
+                </Grid>
+                <StackPanel VerticalAlignment="Center" Width="500" Margin="24, 12, 12, 12">
+                    <Grid Margin="24, 12, 12, 12" CornerRadius="16" MaxWidth="94" HorizontalAlignment="Left" Background="{ThemeResource LayerFillColorDefaultBrush}">
+                        <TextBlock Margin="12, 4, 12, 4" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" Text="{x:Bind helpers:ArticlesHelper.FormatTime(FirstArticle.metadata.date), Mode=OneWay}"/>
+                    </Grid>
+                    <TextBlock Margin="24, 12, 12, 12" FontSize="36" FontWeight="SemiBold" TextWrapping="WrapWholeWords" Text="{x:Bind FirstArticle.metadata.title, Mode=OneWay}"/>
+                    <TextBlock Margin="24, 0, 12, 12" Opacity="0.7" FontSize="16" TextWrapping="WrapWholeWords" Text="{x:Bind FirstArticle.metadata.description, Mode=OneWay}"/>
+                    <Button Margin="24, 0, 12, 12" Click="ReadMoreButton_Click">Read More</Button>
+                </StackPanel>
+            </StackPanel>
+            <MenuFlyoutSeparator Margin="0, 12, 0, 12"/>
+        </StackPanel>
+        </GridView.Header>
+        <GridView.ItemContainerStyle>
+            <Style TargetType="GridViewItem">
+                <Setter Property="Margin" Value="12"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <ContentPresenter/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </GridView.ItemContainerStyle>
+        <GridView.ItemTemplate>
+            <DataTemplate x:DataType="classes:Article">
+                <Grid PointerEntered="Grid_PointerEntered" PointerReleased="Grid_PointerReleased" PointerPressed="Grid_PointerPressed" Width="340" Height="400" PointerExited="Grid_PointerExited">
+                    <Grid.Resources>
+                        <Storyboard x:Name="EnterStoryboard">
+                                <DoubleAnimation Storyboard.TargetName="grid" EnableDependentAnimation="True" Storyboard.TargetProperty="Height" Duration="0:0:0.12" To="400"/>
+                                <DoubleAnimation Storyboard.TargetName="grid" EnableDependentAnimation="True" Storyboard.TargetProperty="Width" Duration="0:0:0.12" To="340"/>
+                            </Storyboard>
+                        <Storyboard x:Name="ExitStoryboard">
+                                <DoubleAnimation Storyboard.TargetName="grid" EnableDependentAnimation="True" Storyboard.TargetProperty="Height" Duration="0:0:0.12" To="380"/>
+                                <DoubleAnimation Storyboard.TargetName="grid" EnableDependentAnimation="True" Storyboard.TargetProperty="Width" Duration="0:0:0.12" To="320"/>
+                        </Storyboard>
+                        <Storyboard x:Name="PressedStoryboard">
+                            <PointerDownThemeAnimation Storyboard.TargetName="grid"/>
+                        </Storyboard>
+                        <Storyboard x:Name="ReleasedStoryboard">
+                            <PointerUpThemeAnimation Storyboard.TargetName="grid"/>
+                        </Storyboard>
+                        </Grid.Resources>
+                    <Grid x:Name="grid" Height="380" Width="320" CornerRadius="8" Background="{ThemeResource LayerFillColorDefaultBrush}">
+                        <StackPanel VerticalAlignment="Top">
+                        <Image VerticalAlignment="Top" Source="{x:Bind helpers:ArticlesHelper.GetArticleThumbnail(metadata.thumbnail)}" />
+                        <TextBlock Margin="24, 12, 12, 12" FontSize="22" FontWeight="SemiBold" TextWrapping="WrapWholeWords" Text="{x:Bind metadata.title}"/>
+                        <TextBlock Margin="24, 0, 12, 12" Opacity="0.7" FontSize="16" TextWrapping="WrapWholeWords" Text="{x:Bind metadata.description}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="24, 12, 12, 12">
+                        <PersonPicture ProfilePicture="{x:Bind helpers:ArticlesHelper.GetProfilePicture(metadata.author)}" Height="40" Width="40"/>
+                        <StackPanel Margin="8, 4, 4, 4">
+                            <TextBlock Margin="4, 4, 4, 0" FontWeight="SemiBold" Text="{x:Bind metadata.author, Mode=OneTime}"/>
+                            <TextBlock Margin="4" Opacity="0.7" FontSize="12" Text="{x:Bind helpers:ArticlesHelper.FormatTime(metadata.date)}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                 </Grid>
+            </DataTemplate>
+        </GridView.ItemTemplate>
+    </GridView>
+    </Grid>
+</Page>

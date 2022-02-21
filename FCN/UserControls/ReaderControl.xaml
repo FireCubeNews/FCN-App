@@ -1,0 +1,28 @@
+﻿<UserControl
+    x:Class="FCN.UserControls.ReaderControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FCN.UserControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:helpers="using:FCN.Helpers" xmlns:richText="using:RichTextControls"
+    mc:Ignorable="d">
+    <ScrollViewer VerticalScrollBarVisibility="Visible" VerticalScrollMode="Enabled">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <StackPanel VerticalAlignment="Top" MaxWidth="900" Margin="12, 8, 12, 8" HorizontalAlignment="Center">
+                <TextBlock Margin="24, 12, 12, 12" FontSize="36" FontWeight="SemiBold" TextWrapping="WrapWholeWords" Text="{x:Bind Article.metadata.title, Mode=OneWay}"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="24, 12, 12, 12">
+                    <PersonPicture ProfilePicture="{x:Bind helpers:ArticlesHelper.GetProfilePicture(Article.metadata.author)}" Height="40" Width="40"/>
+                    <HyperlinkButton Margin="12, 4, 4, 4" VerticalAlignment="Center" FontWeight="SemiBold" NavigateUri="{x:Bind helpers:ArticlesHelper.GetAuthorLink(Article.metadata.author), Mode=OneWay}" Content="{x:Bind Article.metadata.author, Mode=OneTime}"/>
+                    <TextBlock Text=" • " VerticalAlignment="Center" Margin="8, 4, 8, 4"/>
+                    <TextBlock Margin="4" Opacity="0.7" VerticalAlignment="Center" Text="{x:Bind helpers:ArticlesHelper.FormatTime(Article.metadata.date)}"/>
+                </StackPanel>
+                <MenuFlyoutSeparator Margin="8, 12, 8, 12"/>
+                <Grid VerticalAlignment="Center" CornerRadius="8" Height="480" Width="680">
+                    <Image Height="600" Width="800" Source="{x:Bind helpers:ArticlesHelper.GetArticleThumbnail(Article.metadata.thumbnail), Mode=OneWay}" />
+                </Grid>
+                <richText:HtmlTextBlock FontSize="16" HorizontalAlignment="Center" Margin="0, 12, 0, 12" Html="{x:Bind helpers:ArticlesHelper.GetArticleTextAsHTML(Article.path), Mode=OneWay}"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>
